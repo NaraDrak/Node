@@ -3,6 +3,9 @@ const {
   inquirerPause,
   inquirerMenu,
   readInput,
+  todoToDelete,
+  confirMenu,
+  showCheckList,
 } = require("./helpers/inquirer");
 const { saveData, readDB } = require("./helpers/saveData");
 const Todos = require("./models/todos");
@@ -24,15 +27,29 @@ const main = async () => {
         todos.createTodo(description);
         break;
       case "2":
-        todos.AllTodos();
+        todos.ListAllTodos();
         break;
       case "3":
-        todos.ListCompltedTodos(true);
+        todos.ListByStatus(true);
         break;
       case "4":
-        todos.ListCompltedTodos(false);
+        todos.ListByStatus(false);
         break;
+      case "5":
+        const ids = await showCheckList(todos.listTodos);
+        todos.toggleTodos(ids);
+        break;
+      case "6":
+        const selectedTodoId = await todoToDelete(todos.listTodos);
+        if (selectedTodoId !== "0") {
+          const ok = await confirMenu("¿Estas seguro?");
+          if (ok) {
+            await todos.deleteTodo(selectedTodoId);
+            console.log("Tarea eliminada");
+          }
+        }
     }
+    await inquirerPause();
     saveData(todos.listTodos);
   } while (opt !== "0");
 };

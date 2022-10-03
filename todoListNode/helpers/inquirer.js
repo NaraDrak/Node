@@ -9,17 +9,17 @@ const questions = [
     choices: [
       { value: "1", name: "1. Crear tarea" },
       { value: "2", name: "2. Listar tareas" },
-      { value: "3", name: "2. Listar tareas completadas" },
-      { value: "4", name: "2. Listar tareas pendientes" },
-      { value: "5", name: "2. Listar tareas tarea(s)" },
-      { value: "6", name: "2. Borrar tarea" },
+      { value: "3", name: "3. Listar tareas completadas" },
+      { value: "4", name: "4. Listar tareas pendientes" },
+      { value: "5", name: "5. Listar tareas tarea(s)" },
+      { value: "6", name: "6. Borrar tarea" },
       { value: "0", name: "0. Salir" },
     ],
   },
 ];
 
 const inquirerMenu = async () => {
-  console.log("===================".green);
+  console.log("\n===================".green);
   console.log("Selecciona una opcioón".green);
   console.log("=================== \n".green);
 
@@ -52,4 +52,73 @@ const readInput = async (message) => {
   const { description } = await inquirer.prompt(readTodo);
   return description;
 };
-module.exports = { inquirerMenu, inquirerPause, readInput };
+
+const todoToDelete = async (todos = []) => {
+  const choices = todos.map((todo, index) => {
+    const idx = `${index + 1}.`.green;
+    return { value: todo.id, name: `${idx} ${todo.description}` };
+  });
+  choices.unshift({
+    value: "0",
+    name: "0.".green + " Cancelar",
+  });
+  const questions = [
+    {
+      type: "list",
+      name: "id",
+      message: "Borrar",
+      choices,
+    },
+  ];
+  const { id } = await inquirer.prompt(questions);
+
+  return id;
+};
+
+const showCheckList = async (todos = []) => {
+  const choices = todos.map((todo, index) => {
+    const idx = `${index + 1}.`.green;
+    return {
+      value: todo.id,
+      name: `${idx} ${todo.description}`,
+      checked: todo.completedAt ? true : false,
+    };
+  });
+  /*   choices.unshift({
+    value: "0",
+    name: "0.".green + " Cancelar",
+  }); */
+  const questions = [
+    {
+      type: "checkbox",
+      name: "ids",
+      message: "Borrar",
+      choices,
+    },
+  ];
+  const { ids } = await inquirer.prompt(questions);
+
+  return ids;
+};
+
+const confirMenu = async (message) => {
+  const questions = [
+    {
+      type: "confirm",
+      name: "ok",
+      message,
+    },
+  ];
+  const { ok } = await inquirer.prompt(questions);
+
+  return ok;
+};
+
+module.exports = {
+  inquirerMenu,
+  inquirerPause,
+  readInput,
+  todoToDelete,
+  confirMenu,
+  showCheckList,
+};

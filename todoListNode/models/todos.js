@@ -6,7 +6,7 @@ class Todos {
     this._list = {};
   }
 
-  //Esta funcion crea un array de cada uno de los
+  //Esta funcion crea un array de cada uno de los todo
   get listTodos() {
     let list = [];
     Object.keys(this._list).forEach((key) => {
@@ -25,7 +25,7 @@ class Todos {
     this._list[todo.id] = todo;
   };
 
-  AllTodos = () => {
+  ListAllTodos = () => {
     this.listTodos.forEach((todo, index) => {
       const idx = `${index + 1}`.blue;
       console.log(
@@ -36,10 +36,10 @@ class Todos {
     });
   };
 
-  ListCompltedTodos = (completed) => {
+  ListByStatus = (status) => {
     this.listTodos.forEach((todo, index) => {
       const idx = `${index + 1}`.blue;
-      if (completed === true) {
+      if (status === true) {
         todo.completedAt
           ? console.log(
               `${idx}`,
@@ -48,7 +48,7 @@ class Todos {
             )
           : "";
       } else {
-        if (completed === false) {
+        if (status === false) {
           !todo.completedAt
             ? console.log(
                 `${idx}`,
@@ -57,6 +57,28 @@ class Todos {
               )
             : "";
         }
+      }
+    });
+  };
+
+  deleteTodo = async (id) => {
+    if (this._list[id]) {
+      console.log("tarea encontrada");
+      delete this._list[id];
+    }
+  };
+
+  toggleTodos = (ids = []) => {
+    ids.forEach((id) => {
+      const todo = this._list[id];
+      if (!todo.completedAt) {
+        todo.completedAt = new Date().toISOString();
+      }
+    });
+
+    this.listTodos.forEach((todo) => {
+      if (!ids.includes(todo.id)) {
+        this._list[todo.id].completedAt = null;
       }
     });
   };
